@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>今日花價（試做）</title>
+<style>
+  :root{--ink:#4a4039;--ink2:#8c7f73;--line:#ede6dc;--paper:#fffdf9;--cheap:#4f7d52;--cheap-bg:#f1f6ee;--dear:#b04d61;--dear-bg:#fbf0f2;--accent:#3f7f7b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#fff;color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;-webkit-font-smoothing:antialiased}
+  .serif{font-family:"Noto Serif TC","PMingLiU",serif}
+  .wrap{max-width:980px;margin:0 auto;padding:22px max(16px,env(safe-area-inset-right,0px)) 50px max(16px,env(safe-area-inset-left,0px))}
+  .num{font-variant-numeric:tabular-nums}
+  header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 24px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+  header h1{font-size:38px;font-weight:600;letter-spacing:8px;line-height:1.1}
+  header p{color:var(--ink2);font-size:14px;margin-top:6px}
+  .date{margin-left:auto;text-align:right;font-size:13px;color:var(--ink2)}
+  .date b{display:block;font-size:20px;color:var(--ink);font-weight:600}
+  .markets{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
+  .markets button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:6px 15px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer}
+  .markets button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .markets small{color:var(--ink2);font-size:12px;align-self:center;margin-left:6px}
+  .today{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+  @media (max-width:640px){.today{grid-template-columns:1fr}}
+  .panel{border-radius:18px;padding:14px 16px}
+  .panel.cheap{background:var(--cheap-bg)}
+  .panel.dear{background:var(--dear-bg)}
+  .panel h2{font-size:17px;font-weight:600;margin-bottom:8px}
+  .panel.cheap h2{color:var(--cheap)}
+  .panel.dear h2{color:var(--dear)}
+  .row{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px dashed #00000012}
+  .row:first-of-type{border-top:0}
+  .dot{width:14px;height:14px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px #0000001a}
+  .row .n{font-size:15px}
+  .row .p{margin-left:auto;font-size:17px;font-weight:600}
+  .row .c{width:64px;text-align:right;font-size:13px}
+  .down{color:var(--cheap)} .up{color:var(--dear)} .flat{color:var(--ink2)}
+  .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:20px 0 10px}
+  .tools input{flex:1;min-width:180px;border:1.5px solid var(--line);border-radius:99px;padding:9px 16px;font:inherit;font-size:15px;color:var(--ink)}
+  .tools select{border:1.5px solid var(--line);border-radius:99px;padding:8px 12px;font:inherit;font-size:14px;color:var(--ink);background:#fff}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+  .card{border:1px solid var(--line);border-radius:18px;padding:14px 16px 12px;background:var(--paper);cursor:pointer;text-align:left;font:inherit;color:inherit;display:block;width:100%}
+  .card:hover{border-color:#d8cdbf}
+  .card:focus-visible{outline:3px solid #f2c96b;outline-offset:2px}
+  .card .top{display:flex;align-items:center;gap:8px}
+  .card .name{font-size:19px;font-weight:600}
+  .card .chg{margin-left:auto;font-size:12px;padding:2px 8px;border-radius:99px}
+  .chg.down{background:var(--cheap-bg)} .chg.up{background:var(--dear-bg)} .chg.flat{background:#f4f0ea}
+  .card .price{font-size:30px;font-weight:600;margin:6px 0 0;line-height:1.2}
+  .card .price small{font-size:13px;color:var(--ink2);font-weight:400;margin-left:3px}
+  .card svg{display:block;width:100%;height:46px;margin-top:4px}
+  .card .cap{font-size:11px;color:#b3a596}
+  .detail{display:none;margin-top:8px;border-top:1px dashed var(--line);padding-top:8px;font-size:13px}
+  .card.open .detail{display:block}
+  .detail div{display:flex;justify-content:space-between;padding:2px 0;color:var(--ink2)}
+  .detail b{color:var(--ink);font-weight:500}
+  .empty{color:var(--ink2);padding:20px 0}
+  .note{margin-top:22px;border-radius:16px;background:#faf6ef;padding:14px 18px;font-size:14px;line-height:1.8}
+  .cta{margin-top:14px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;border-radius:16px;border:1.5px dashed #e3c7cd;padding:14px 18px}
+  .cta p{flex:1;min-width:220px;font-size:15px}
+  .pill{border-radius:99px;padding:9px 18px;font:inherit;font-size:14px;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+  .pill.main{background:var(--accent);border-color:var(--accent);color:#fff}
+  footer{margin-top:22px;font-size:12px;color:#9c8f82;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 class="serif">今日花價</h1>
+      <p>台灣五個花卉批發市場的行情，看看今天哪些花比較親民。</p>
+    </div>
+    <div class="date">資料日期<b class="serif" id="dateTxt">—</b><span id="dateSub"></span></div>
+  </header>
+
+  <div class="markets" id="markets"></div>
+
+  <section class="today">
+    <div class="panel cheap"><h2 class="serif">今天比較親民的花</h2><div id="cheapList"></div></div>
+    <div class="panel dear"><h2 class="serif">今天行情比較高</h2><div id="dearList"></div></div>
+  </section>
+
+  <div class="tools">
+    <label for="q" class="sr" hidden>找花</label>
+    <input id="q" placeholder="找花名，例如：玫瑰、繡球" autocomplete="off">
+    <label for="sort" hidden>排序</label>
+    <select id="sort"><option value="name">依花名</option><option value="price">價格低到高</option><option value="chg">今天跌最多</option></select>
+  </div>
+  <div class="grid" id="grid"></div>
+
+  <div class="note">這裡是花市的<b>批發平均價</b>，是花農和花店之間一把一把拍賣的價格。花店賣給你的價錢，還包含挑花、整理、保鮮、包裝和設計，兩個不一樣。點一張花卡，可以看各市場今天的價格。</div>
+  <div class="cta"><p id="ctaTxt">今天的花，插一束看看？</p><button class="pill main" id="toBouquet">去插一束花</button><button class="pill" id="toAmber">看 Amber 的花作</button></div>
+
+  <footer>
+    資料來源：農業部 農產品交易行情。此開放資料依政府資料開放授權條款（Open Government Data License）進行公眾釋出，使用者於遵守本條款各項規定之前提下，得利用之。條款：https://data.gov.tw/license 。<br>
+    價格是同一種花各品項依交易量加權的平均，僅供參考；計價單位以農業部公告為準（試做版待確認）。這一頁是試做版，數字是 2026 年 11 月 24 日抓的那一份，還不會每天自動更新。
+  </footer>
+</div>
+<script>
+(async () => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  let D;
+  try { D = await (await fetch("prices.json")).json(); }
+  catch (e) { $("grid").innerHTML = '<p class="empty">花價資料暫時讀不到，請稍後再試。</p>'; return; }
+  const WEEK = "日一二三四五六";
+  const views = ["全台", ...D.markets];
+  let view = "全台", sortBy = "name", open = null;
+
+  // 每個看法要用哪幾天：全台只算有 3 個以上市場開市的日子
+  const usable = i => view !== "全台" || D.dayMarkets[i] >= 3;
+  function statFor(f, v) {
+    const s = f.series[v] || [];
+    const idx = s.map((val, i) => (val != null && (v !== "全台" || D.dayMarkets[i] >= 3)) ? i : -1).filter(i => i >= 0);
+    if (!idx.length) return null;
+    const last = idx[idx.length - 1], prev = idx.length > 1 ? idx[idx.length - 2] : null;
+    const p = s[last], chg = prev != null ? (p - s[prev]) / s[prev] * 100 : null;
+    return { p, chg, last, pts: idx.map(i => s[i]) };
+  }
+  // 全台的漲跌：每個市場各自跟自己上一個交易日比，再平均（避免拿不同市場的平均價互相比）
+  function stat(f) {
+    const st = statFor(f, view);
+    if (!st || view !== "全台") return st;
+    const ch = D.markets.map(m => statFor(f, m)).filter(x => x && x.chg != null).map(x => x.chg);
+    st.chg = ch.length ? ch.reduce((a, b) => a + b, 0) / ch.length : null;
+    return st;
+  }
+  function latestDate() {
+    let best = -1;
+    D.flowers.forEach(f => { const st = stat(f); if (st && st.last > best) best = st.last; });
+    return best;
+  }
+  const fmtChg = c => c == null ? "—" : (Math.abs(c) < 3 ? "持平" : (c > 0 ? "▲ " : "▼ ") + Math.abs(c).toFixed(0) + "%");
+  const cls = c => c == null || Math.abs(c) < 3 ? "flat" : c > 0 ? "up" : "down";
+
+  function spark(pts, color) {
+    if (pts.length < 2) return "";
+    const w = 200, h = 46, pad = 5, mn = Math.min(...pts), mx = Math.max(...pts), r = (mx - mn) || 1;
+    const xy = pts.map((v, i) => [pad + i * (w - pad * 2) / (pts.length - 1), h - pad - (v - mn) / r * (h - pad * 2)]);
+    const line = xy.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ");
+    const area = "M" + xy[0][0] + "," + (h - 2) + " L" + line.replace(/ /g, " L") + " L" + xy[xy.length - 1][0] + "," + (h - 2) + " Z";
+    const e = xy[xy.length - 1];
+    return '<svg viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none" aria-hidden="true"><path d="' + area + '" fill="' + color + '" opacity=".22"/><polyline points="' + line + '" fill="none" stroke="#8c7f73" stroke-width="1.6" vector-effect="non-scaling-stroke"/><circle cx="' + e[0] + '" cy="' + e[1] + '" r="3.2" fill="#4a4039"/></svg>';
+  }
+
+  function render() {
+    $("markets").innerHTML = views.map(v => '<button class="' + (v === view ? "on" : "") + '" data-v="' + v + '">' + (v === "全台" ? "全台平均" : v) + "</button>").join("");
+    const li = latestDate();
+    if (li >= 0) {
+      const d = new Date(D.dates[li] + "T00:00:00");
+      $("dateTxt").textContent = (d.getMonth() + 1) + " 月 " + d.getDate() + " 日（週" + WEEK[d.getDay()] + "）";
+      $("dateSub").textContent = view === "全台" ? D.dayMarkets[li] + " 個市場有交易・和上一個交易日比" : view + "市場・和上一個交易日比";
+    }
+    const items = D.flowers.map(f => ({ f, st: stat(f) })).filter(x => x.st);
+    const moved = items.filter(x => x.st.chg != null);
+    const row = x => '<div class="row"><span class="dot" style="background:' + x.f.color + '"></span><span class="n">' + esc(x.f.name) + '</span><span class="p num">' + x.st.p.toFixed(0) + ' 元</span><span class="c num ' + cls(x.st.chg) + '">' + fmtChg(x.st.chg) + "</span></div>";
+    const cheap = [...moved].sort((a, b) => a.st.chg - b.st.chg).filter(x => x.st.chg < -3).slice(0, 3);
+    const dear = [...moved].sort((a, b) => b.st.chg - a.st.chg).filter(x => x.st.chg > 3).slice(0, 3);
+    $("cheapList").innerHTML = cheap.length ? cheap.map(row).join("") : '<p class="empty">今天沒有明顯變便宜的花。</p>';
+    $("dearList").innerHTML = dear.length ? dear.map(row).join("") : '<p class="empty">今天沒有明顯變貴的花。</p>';
+    $("ctaTxt").textContent = cheap.length ? "今天" + cheap.slice(0, 2).map(x => x.f.name).join("和") + "比較親民，插一束看看？" : "今天的花，插一束看看？";
+    const q = $("q").value.trim();
+    let list = items.filter(x => !q || x.f.name.includes(q));
+    if (sortBy === "price") list.sort((a, b) => a.st.p - b.st.p);
+    if (sortBy === "chg") list.sort((a, b) => (a.st.chg ?? 0) - (b.st.chg ?? 0));
+    $("grid").innerHTML = list.length ? list.map(x => {
+      const det = views.filter(v => v !== "全台").map(v => {
+        const s = x.f.series[v] || [], i = s.map((val, k) => val != null ? k : -1).filter(k => k >= 0).pop();
+        return "<div><span>" + v + "</span><b class=\"num\">" + (i != null ? s[i].toFixed(0) + " 元" : "沒有交易") + "</b></div>";
+      }).join("");
+      return '<button class="card' + (open === x.f.name ? " open" : "") + '" data-n="' + esc(x.f.name) + '"><div class="top"><span class="dot" style="background:' + x.f.color + '"></span><span class="name serif">' + esc(x.f.name) + '</span><span class="chg num ' + cls(x.st.chg) + '">' + fmtChg(x.st.chg) + '</span></div>' +
+        '<div class="price num">' + x.st.p.toFixed(0) + "<small>元</small></div>" + spark(x.st.pts, x.f.color) +
+        '<div class="cap">近 ' + x.st.pts.length + ' 個交易日</div><div class="detail">' + det + "</div></button>";
+    }).join("") : '<p class="empty">找不到「' + esc(q) + '」，換個花名試試。</p>';
+  }
+  $("markets").onclick = e => { const b = e.target.closest("button"); if (b) { view = b.dataset.v; render(); } };
+  $("q").oninput = render;
+  $("sort").onchange = e => { sortBy = e.target.value; render(); };
+  $("grid").onclick = e => { const c = e.target.closest(".card"); if (c) { open = open === c.dataset.n ? null : c.dataset.n; render(); } };
+  $("toBouquet").onclick = () => { $("ctaTxt").textContent = "之後這裡會連到插花小遊戲。"; };
+  $("toAmber").onclick = () => { $("ctaTxt").textContent = "之後這裡會連到 Amber 的花作。"; };
+  render();
+})();
+</script>
+</body>
+</html>

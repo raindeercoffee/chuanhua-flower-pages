@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>花的一生（初版・假字）</title>
+<style>
+  :root{--ink:#4f443b;--ink2:#8f8174;--line:#ece4d8;--paper:#fffdf9;--soil:#9b7b5c;--leaf:#7c9a5a;--coral:#c9566b;--accent:#3f7f7b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#fff;color:var(--ink);font-family:"Noto Serif TC","PMingLiU",serif;line-height:1.85;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto;padding:18px 18px 40px}
+  .sans{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif}
+  header{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+  header h1{font-size:20px;letter-spacing:4px;font-weight:600}
+  header .count{margin-left:auto;font-size:12px;color:var(--ink2)}
+  button{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;cursor:pointer}
+  .pill{border-radius:99px;padding:10px 22px;font-size:15px;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--ink)}
+  .pill.main{background:var(--accent);border-color:var(--accent);color:#fff}
+  .pill:focus-visible{outline:3px solid #f2c96b;outline-offset:2px}
+  /* 開始 */
+  #start{text-align:center;padding:60px 0 20px}
+  #start h2{font-size:34px;letter-spacing:10px;font-weight:600;margin-bottom:14px}
+  #start p{color:var(--ink2);max-width:28em;margin:0 auto 26px;font-size:15px}
+  /* 一生 */
+  #life{display:none}
+  .info{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--ink2)}
+  .info b{color:var(--ink);font-weight:600}
+  .scene{position:relative;height:300px;margin:10px 0 6px;border-radius:18px;background:linear-gradient(#fbfaf6,#f6f1e8);overflow:hidden}
+  .ground{position:absolute;left:0;right:0;bottom:0;height:70px;background:linear-gradient(#b89a79,#a3825f)}
+  .ground::before{content:"";position:absolute;left:0;right:0;top:-6px;height:12px;border-radius:50%;background:#b89a79}
+  .plant{position:absolute;left:50%;bottom:62px;transform-origin:50% 100%;transition:transform 1.6s cubic-bezier(.3,.7,.2,1),filter 2.4s,opacity 1.6s}
+  .plant img{display:block;height:210px;width:auto}
+  .seed{position:absolute;left:50%;bottom:52px;width:14px;height:10px;margin-left:-7px;border-radius:50%;background:#6d4f34;transition:opacity 1s}
+  .sprout{position:absolute;left:50%;bottom:62px;width:40px;height:40px;margin-left:-20px;transform-origin:50% 100%;transition:transform 1.2s,opacity 1s}
+  .wrapper{position:absolute;left:50%;bottom:40px;width:130px;height:120px;margin-left:-65px;background:#e9dcc6;clip-path:polygon(0 0,100% 0,62% 100%,38% 100%);opacity:0;transition:opacity 1.2s}
+  .petal{position:absolute;width:10px;height:7px;border-radius:50% 50% 50% 0;opacity:0}
+  .fall .petal{animation:fall 3.6s ease-in forwards}
+  @keyframes fall{0%{opacity:0;transform:translate(0,0) rotate(0)}10%{opacity:.9}100%{opacity:0;transform:translate(var(--dx),150px) rotate(220deg)}}
+  .sway{animation:sway 4.5s ease-in-out infinite alternate}
+  @keyframes sway{from{rotate:-1.2deg}to{rotate:1.2deg}}
+  .track{display:flex;justify-content:space-between;gap:2px;margin:8px 0 2px;font-size:11px;color:#c4b8ab}
+  .track span{flex:1;text-align:center;position:relative;padding-top:12px}
+  .track span::before{content:"";position:absolute;left:50%;top:0;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:#e5ddd2}
+  .track span.done{color:var(--ink2)}
+  .track span.done::before{background:var(--leaf)}
+  .track span.now{color:var(--ink);font-weight:700}
+  .track span.now::before{background:var(--coral);box-shadow:0 0 0 3px #f6dfe3}
+  @media (max-width:520px){.track span:not(.now){font-size:0}.track{margin-bottom:10px}}
+  .story{min-height:118px;font-size:17px;padding:14px 4px 6px}
+  .choices{display:flex;flex-direction:column;gap:8px;margin:4px 0 10px}
+  .choices button{text-align:left;border-radius:14px;padding:12px 16px;border:1.5px solid var(--line);background:#fff;font-size:15px;color:var(--ink)}
+  .choices button:hover{border-color:var(--accent);background:#f2f8f7}
+  .bar{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);flex-wrap:wrap}
+  .bar button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:4px 12px;font-size:13px;color:var(--ink)}
+  .bar button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .meters{margin-left:auto;display:flex;gap:12px}
+  .meters i{font-style:normal}
+  .meters b{display:inline-block;width:46px;height:5px;border-radius:3px;background:#eee6db;vertical-align:middle;margin-left:4px;overflow:hidden;position:relative}
+  .meters b::after{content:"";position:absolute;inset:0;width:var(--v,40%);background:var(--leaf);transition:width .8s}
+  details{margin-top:14px;font-size:14px;color:var(--ink2)}
+  details summary{cursor:pointer}
+  details ol{padding-left:1.4em;margin-top:6px}
+  details li{margin:4px 0}
+  /* 結尾 */
+  #end{display:none;text-align:center}
+  #end img.card{width:100%;max-width:440px;border-radius:16px;box-shadow:0 0 0 1.5px var(--line),0 12px 30px #0000000f;margin:8px auto 14px;display:block}
+  #end .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  #end .note{font-size:13px;color:var(--ink2);margin-top:12px}
+  #toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:7px 16px;border-radius:99px;font-size:14px;display:none;z-index:9}
+  @media (prefers-reduced-motion:reduce){.sway,.fall .petal{animation:none}.plant,.sprout{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>花的一生</h1><span class="count sans" id="count"></span></header>
+
+  <section id="start">
+    <h2>花的一生</h2>
+    <p>你會出生成一顆種子。在台灣某個地方發芽、長大、開花，被剪下、被買走、被送到某個人手上，然後慢慢謝去。一生大約一分鐘，中間有三次，要你自己決定。</p>
+    <button class="pill main" id="bornBtn">出生</button>
+  </section>
+
+  <section id="life" aria-live="polite">
+    <div class="info sans"><span>你是一朵 <b id="iFlower"></b></span><span>出生在 <b id="iPlace"></b></span><span>第 <b id="iDay">0</b> 天</span></div>
+    <div class="scene" id="scene">
+      <div class="ground"></div>
+      <div class="seed" id="seed"></div>
+      <svg class="sprout" id="sprout" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 40V22" stroke="#7c9a5a" stroke-width="3"/><path d="M20 24c-10 0-15-6-15-12 8 0 14 4 15 12z" fill="#8fb06a"/><path d="M20 22c9 0 14-6 14-11-8 0-13 4-14 11z" fill="#9cbc74"/></svg>
+      <div class="wrapper" id="wrapper"></div>
+      <div class="plant" id="plant"><img id="plantImg" alt=""></div>
+      <div id="petals"></div>
+    </div>
+    <div class="track sans" id="track"></div>
+    <div class="story" id="story"></div>
+    <div class="choices" id="choices"></div>
+    <div class="bar sans">
+      <button id="pause">暫停</button>
+      <button data-s="1" class="on">1×</button><button data-s="2">2×</button><button data-s="4">4×</button>
+      <span class="meters"><i>生命力<b id="mLife"></b></i><i>美<b id="mBeauty"></b></i><i>溫柔<b id="mWarmth"></b></i></span>
+    </div>
+    <details class="sans"><summary>這一生的日記</summary><ol id="diary"></ol></details>
+  </section>
+
+  <section id="end">
+    <img class="card" id="memCard" alt="這一生的回憶卡">
+    <div class="btns">
+      <button class="pill main" id="againBtn">再活一次</button>
+      <button class="pill" id="saveBtn">存成回憶卡</button>
+      <button class="pill" id="goBouquet">去插一束花</button>
+    </div>
+    <p class="note sans">這一生只留在你自己的瀏覽器裡，沒有傳到任何地方。</p>
+  </section>
+</div>
+<div id="toast" class="sans"></div>
+<canvas id="cv" width="1080" height="1350" hidden></canvas>
+<script src="life.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const rnd = a => a[Math.floor(Math.random() * a.length)];
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  let S = null, speed = 1, paused = false, timer = 0, busy = false, queue = [];
+
+  // 活過幾次（只存在這台瀏覽器）
+  let lives = 0; try { lives = +(localStorage.getItem("chuanhua-flowerlife-count") || 0); } catch (e) {}
+  const showCount = () => { $("count").textContent = lives ? "你已經活過 " + lives + " 次" : ""; };
+  showCount();
+
+  function pickFlower() {
+    const total = LIFE_FLOWERS.reduce((t, f) => t + f.weight, 0);
+    let r = Math.random() * total;
+    for (const f of LIFE_FLOWERS) { r -= f.weight; if (r <= 0) return f; }
+    return LIFE_FLOWERS[0];
+  }
+  const fill = s => s.replace(/\{花\}/g, S.flower.name).replace(/\{地\}/g, S.place).replace(/\{色\}/g, S.flower.color);
+
+  function born() {
+    const f = pickFlower();
+    S = { flower: f, place: rnd(f.places), day: 0, stage: -1, meters: { life: 5, beauty: 5, warmth: 5 },
+          log: [], hands: null, end: null, plan: {} };
+    // 每個階段挑 1 個小事件，放在這個階段中間
+    LIFE_STAGES.forEach((st, i) => {
+      const pool = LIFE_EVENTS.filter(e => e.stage === st.key);
+      if (!pool.length) return;
+      const next = LIFE_STAGES[i + 1] ? LIFE_STAGES[i + 1].day : st.day + 5;
+      const d = st.day + Math.max(1, Math.floor((next - st.day) * (0.3 + Math.random() * 0.3)));
+      (S.plan[d] = S.plan[d] || []).push({ type: "event", ev: rnd(pool) });
+    });
+    const leaf = LIFE_STAGES.find(s => s.key === "leaf").day + 10;
+    (S.plan[leaf] = S.plan[leaf] || []).push({ type: "choice", key: "cold" });
+    $("start").style.display = "none"; $("end").style.display = "none"; $("life").style.display = "block";
+    $("iFlower").textContent = f.name; $("iPlace").textContent = S.place; $("iDay").textContent = 0;
+    $("plantImg").src = f.img; $("diary").innerHTML = ""; $("choices").innerHTML = ""; $("story").textContent = "";
+    $("track").innerHTML = LIFE_STAGES.map(s => "<span>" + s.label + "</span>").join("");
+    drawPlant("none"); meters(); run();
+  }
+
+  // ---- 植物的樣子 ----
+  function drawPlant(k) {
+    const p = $("plant"), seed = $("seed"), sp = $("sprout"), wr = $("wrapper");
+    p.classList.remove("sway");
+    const set = (o, t, f) => { p.style.opacity = o; p.style.transform = "translateX(-50%) " + t; p.style.filter = f || "none"; };
+    seed.style.opacity = (k === "none" || k === "seed") ? 1 : 0;
+    sp.style.opacity = k === "sprout" ? 1 : 0; sp.style.transform = k === "sprout" ? "scale(1)" : "scale(.2)";
+    wr.style.opacity = k === "hands" ? 1 : 0;
+    if (k === "none" || k === "seed" || k === "sprout") set(0, "scale(.2)");
+    if (k === "leaf") set(1, "scale(.45)", "saturate(.5) hue-rotate(-20deg) brightness(1.05)");
+    if (k === "bud") set(1, "scale(.7)", "saturate(.75)");
+    if (k === "bloom") { set(1, "scale(1)"); p.classList.add("sway"); }
+    if (k === "harvest" || k === "market") set(1, "scale(.92) rotate(-4deg)");
+    if (k === "hands") { set(1, "translateY(-22px) scale(.9)"); p.classList.add("sway"); }
+    if (k === "fade") { set(1, "scale(.9) rotate(14deg)", "sepia(.85) saturate(.4) brightness(1.02)"); petals(); }
+    if (k === "soil") { set(0, "translateY(30px) scale(.6) rotate(14deg)", "sepia(.8) saturate(.3)"); setTimeout(() => { sp.style.opacity = 1; sp.style.transform = "scale(.7)"; }, 1800); }
+  }
+  function petals() {
+    const box = $("petals"); box.innerHTML = ""; box.className = "";
+    for (let i = 0; i < 7; i++) {
+      const s = document.createElement("span"); s.className = "petal";
+      s.style.left = (44 + Math.random() * 12) + "%"; s.style.top = (22 + Math.random() * 18) + "%";
+      s.style.background = ["#e9b9c1", "#f1d3a6", "#e4c7a8"][i % 3];
+      s.style.setProperty("--dx", (Math.random() * 120 - 60) + "px"); s.style.animationDelay = (i * 0.4) + "s";
+      box.appendChild(s);
+    }
+    requestAnimationFrame(() => box.className = "fall");
+  }
+  function meters() {
+    const m = S.meters;
+    [["mLife", m.life], ["mBeauty", m.beauty], ["mWarmth", m.warmth]].forEach(([id, v]) => $(id).style.setProperty("--v", clamp(v, 0, 10) * 10 + "%"));
+  }
+  function addEffect(e) { if (!e) return; Object.keys(e).forEach(k => S.meters[k] = clamp(S.meters[k] + e[k], 0, 10)); meters(); }
+
+  // ---- 時間往前走 ----
+  function run() { clearInterval(timer); timer = setInterval(tick, 520 / speed); }
+  function tick() {
+    if (paused || busy || queue.length) return;
+    // 階段
+    const ni = S.stage + 1;
+    if (LIFE_STAGES[ni] && S.day >= LIFE_STAGES[ni].day) { S.stage = ni; enterStage(LIFE_STAGES[ni]); return; }
+    if (S.plan[S.day]) { S.plan[S.day].forEach(x => queue.push(x)); delete S.plan[S.day]; next(); return; }
+    if (S.stage === LIFE_STAGES.length - 1) return;
+    S.day++; $("iDay").textContent = S.day;
+  }
+  function enterStage(st) {
+    [...$("track").children].forEach((el, i) => el.className = i < S.stage ? "done" : i === S.stage ? "now" : "");
+    drawPlant(st.key);
+    if (st.key === "hands") { const h = LIFE_HANDS[S.hands]; queue.push({ type: "text", text: h.text }); }
+    else if (st.key === "soil") { const e = LIFE_ENDS[S.end]; queue.push({ type: "text", text: e.text }); queue.push({ type: "finish" }); }
+    else queue.push({ type: "text", text: st.text });
+    if (st.key === "market") queue.push({ type: "choice", key: "buyer" });
+    if (st.key === "fade") queue.push({ type: "choice", key: "fade" });
+    next();
+  }
+  function next() {
+    if (busy || !queue.length) return;
+    const it = queue.shift();
+    if (it.type === "text") say(fill(it.text));
+    else if (it.type === "event") { addEffect(it.ev.effect); say(fill(it.ev.text)); }
+    else if (it.type === "choice") ask(LIFE_CHOICES[it.key], it.key);
+    else if (it.type === "finish") { busy = true; setTimeout(finish, 2600 / speed); }
+  }
+  function say(text, then) {
+    busy = true; S.log.push(text);
+    const li = document.createElement("li"); li.textContent = text; $("diary").appendChild(li);
+    const box = $("story"); box.textContent = "";
+    if (reduce) { box.textContent = text; return wait(); }
+    let i = 0; const chars = [...text];
+    const type = () => { if (paused) return setTimeout(type, 200); box.textContent += chars[i++] || ""; if (i < chars.length) setTimeout(type, 34 / speed); else wait(); };
+    type();
+    function wait() { setTimeout(() => { busy = false; if (then) then(); next(); }, Math.max(1400, chars.length * 38) / speed); }
+  }
+  function ask(c, key) {
+    busy = true;
+    const box = $("story"); box.textContent = fill(c.text);
+    $("choices").innerHTML = c.options.map((o, i) => '<button data-i="' + i + '">' + o.label + "</button>").join("");
+    $("choices").onclick = e => {
+      const b = e.target.closest("button"); if (!b) return;
+      const o = c.options[+b.dataset.i]; $("choices").innerHTML = "";
+      S.log.push("（你選了：" + o.label + "）");
+      if (key === "buyer") { S.hands = o.to; busy = false; next(); return; }
+      if (key === "fade") { S.end = o.to; busy = false; next(); return; }
+      addEffect(o.effect); busy = false; say(o.text);
+    };
+    $("choices").querySelector("button").focus({ preventScroll: true });
+  }
+
+  // ---- 結尾回憶卡 ----
+  function finish() {
+    clearInterval(timer); busy = false;
+    lives++; try { localStorage.setItem("chuanhua-flowerlife-count", lives); } catch (e) {} showCount();
+    const img = $("plantImg"), c = $("cv"), x = c.getContext("2d"), W = c.width, H = c.height;
+    const F = '"Noto Serif TC","PMingLiU",serif', FS = '"Noto Sans TC","Microsoft JhengHei",sans-serif';
+    x.fillStyle = "#fffdf9"; x.fillRect(0, 0, W, H);
+    x.strokeStyle = "#ece2d3"; x.lineWidth = 4; x.strokeRect(30, 30, W - 60, H - 60);
+    x.textAlign = "center"; x.fillStyle = "#4f443b";
+    x.font = "600 76px " + F; x.fillText(S.flower.name + "的一生", W / 2, 170);
+    x.font = "400 34px " + FS; x.fillStyle = "#8f8174";
+    x.fillText("出生在" + S.place + "・活了 " + S.day + " 天", W / 2, 232);
+    // 花（稍微褪色）
+    x.save(); x.filter = "sepia(.35) saturate(.7)";
+    const ih = 430, iw = ih * (img.naturalWidth / img.naturalHeight || .7);
+    x.globalAlpha = .95; x.drawImage(img, W / 2 - iw / 2, 280, iw, ih); x.restore();
+    x.fillStyle = "#4f443b"; x.font = "600 44px " + F;
+    x.fillText("「" + LIFE_ENDS[S.end].title + "」", W / 2, 790);
+    x.font = "400 34px " + FS; x.fillStyle = "#6b5d50";
+    const lines = ["陪在" + LIFE_HANDS[S.hands].who + "身邊", "生命力 " + S.meters.life + "・美 " + S.meters.beauty + "・溫柔 " + S.meters.warmth];
+    lines.forEach((l, i) => x.fillText(l, W / 2, 860 + i * 56));
+    x.font = "400 38px " + F; x.fillStyle = "#4f443b";
+    const close = rnd(LIFE_CLOSING); wrapText(x, close, W / 2, 1060, 820, 58);
+    x.font = "400 26px " + FS; x.fillStyle = "#b3a493"; x.fillText("riverflower2025.com・花的一生", W / 2, H - 60);
+    $("memCard").src = c.toDataURL("image/png");
+    $("life").style.display = "none"; $("end").style.display = "block"; window.scrollTo(0, 0);
+  }
+  function wrapText(x, t, cx, y, maxW, lh) { let line = ""; for (const ch of t) { if (x.measureText(line + ch).width > maxW && line) { x.fillText(line, cx, y); y += lh; line = ch; } else line += ch; } if (line) x.fillText(line, cx, y); }
+
+  // ---- 按鈕 ----
+  $("bornBtn").onclick = born; $("againBtn").onclick = born;
+  $("pause").onclick = () => { paused = !paused; $("pause").textContent = paused ? "繼續" : "暫停"; };
+  document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { speed = +b.dataset.s; document.querySelectorAll("[data-s]").forEach(x => x.classList.toggle("on", x === b)); if (S) run(); });
+  let dl = null; if (window.claude && window.claude.use) window.claude.use("downloads").then(v => { dl = v; }).catch(() => {});
+  const toast = t => { const el = $("toast"); el.textContent = t; el.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => el.style.display = "none", 2000); };
+  $("saveBtn").onclick = () => $("cv").toBlob(b => {
+    const name = S.flower.name + "的一生.png";
+    if (dl) { dl.save({ filename: name, data: b }).then(() => toast("回憶卡存好了")).catch(e => toast(e && e.code === "declined" ? "沒有存下來" : "這裡存不了，請長按卡片圖片存起來")); return; }
+    const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); toast("回憶卡存好了");
+  }, "image/png");
+  $("goBouquet").onclick = () => toast("之後會連到插花小遊戲");
+})();
+</script>
+</body>
+</html>
