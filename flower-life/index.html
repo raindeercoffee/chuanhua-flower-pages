@@ -19,16 +19,17 @@
   .pill.main{background:var(--accent);border-color:var(--accent);color:#fff}
   .pill:focus-visible{outline:3px solid #f2c96b;outline-offset:2px}
   /* 開始 */
-  #start{text-align:center;padding:60px 0 20px}
+  #start{text-align:center;padding:52px 20px 170px;border-radius:18px;background:#f6e7e2 url(img/bg_dawn.jpg) no-repeat center bottom/cover}
   #start h2{font-size:34px;letter-spacing:10px;font-weight:600;margin-bottom:14px}
   #start p{color:var(--ink2);max-width:28em;margin:0 auto 26px;font-size:15px}
   /* 一生 */
   #life{display:none}
   .info{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--ink2)}
   .info b{color:var(--ink);font-weight:600}
-  .scene{position:relative;height:300px;margin:10px 0 6px;border-radius:18px;background:linear-gradient(#fbfaf6,#f6f1e8);overflow:hidden}
-  .ground{position:absolute;left:0;right:0;bottom:0;height:70px;background:linear-gradient(#b89a79,#a3825f)}
-  .ground::before{content:"";position:absolute;left:0;right:0;top:-6px;height:12px;border-radius:50%;background:#b89a79}
+  .scene{position:relative;height:300px;margin:10px 0 6px;border-radius:18px;background:#f6e7e2 url(img/bg_dawn.jpg) no-repeat center bottom/cover;overflow:hidden}
+  /* 被剪下之後：鄉下慢慢淡掉，換成室內的桌面 */
+  .ground{position:absolute;inset:0;background:linear-gradient(to top,#eadcc7 0 60px,#fbf6ee 60px);opacity:0;transition:opacity 1.8s}
+  .scene.indoor .ground{opacity:.94}
   .plant{position:absolute;left:50%;bottom:62px;transform-origin:50% 100%;transition:transform 1.6s cubic-bezier(.3,.7,.2,1),filter 2.4s,opacity 1.6s}
   .plant img{display:block;height:210px;width:auto}
   .seed{position:absolute;left:50%;bottom:52px;width:14px;height:10px;margin-left:-7px;border-radius:50%;background:#6d4f34;transition:opacity 1s}
@@ -68,7 +69,7 @@
   #end .btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
   #end .note{font-size:13px;color:var(--ink2);margin-top:12px}
   #toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:7px 16px;border-radius:99px;font-size:14px;display:none;z-index:9}
-  @media (prefers-reduced-motion:reduce){.sway,.fall .petal{animation:none}.plant,.sprout{transition:none}}
+  @media (prefers-reduced-motion:reduce){.sway,.fall .petal{animation:none}.plant,.sprout,.ground{transition:none}}
 </style>
 </head>
 <body>
@@ -165,6 +166,7 @@
     seed.style.opacity = (k === "none" || k === "seed") ? 1 : 0;
     sp.style.opacity = k === "sprout" ? 1 : 0; sp.style.transform = k === "sprout" ? "scale(1)" : "scale(.2)";
     wr.style.opacity = k === "hands" ? 1 : 0;
+    $("scene").classList.toggle("indoor", ["harvest", "market", "hands", "fade"].includes(k));
     if (k === "none" || k === "seed" || k === "sprout") set(0, "scale(.2)");
     if (k === "leaf") set(1, "scale(.45)", "saturate(.5) hue-rotate(-20deg) brightness(1.05)");
     if (k === "bud") set(1, "scale(.7)", "saturate(.75)");
